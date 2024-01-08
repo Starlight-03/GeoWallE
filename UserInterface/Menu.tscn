@@ -1,0 +1,243 @@
+[gd_scene load_steps=18 format=3 uid="uid://b4huiran7k2ye"]
+
+[ext_resource type="Theme" uid="uid://bvkc8k8raccfu" path="res://UserInterface/GeoWallETheme.tres" id="1_if5lm"]
+[ext_resource type="Script" path="res://UserInterface/Menu.cs" id="2_l8j2c"]
+[ext_resource type="Texture2D" uid="uid://cykcrotqd8tin" path="res://UserInterface/scripts/GeoWallE_Icon.png" id="3_8u7gh"]
+[ext_resource type="FontFile" uid="uid://nxaxtaxw74qj" path="res://UserInterface/fonts/IBMPlexMono-Regular.ttf" id="4_ghhnp"]
+[ext_resource type="FontFile" uid="uid://gf2u55p2t2nr" path="res://UserInterface/fonts/IBMPlexMono-SemiBold.ttf" id="5_y7hko"]
+[ext_resource type="Script" path="res://UserInterface/CodePanel.cs" id="6_1746e"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kg1h3"]
+bg_color = Color(0.752941, 0.752941, 0.752941, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vkvra"]
+bg_color = Color(0.0470588, 0.0470588, 0.0470588, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kuljg"]
+bg_color = Color(0.0470588, 0.0470588, 0.0470588, 1)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.0470588, 0.0470588, 0.0470588, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rhn7y"]
+bg_color = Color(0.0470588, 0.0470588, 0.0470588, 1)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.0470588, 0.0470588, 0.0470588, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3ekh4"]
+bg_color = Color(0.121569, 0.121569, 0.121569, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w2x37"]
+bg_color = Color(0.380392, 0.380392, 0.380392, 1)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.380392, 0.380392, 0.380392, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7e8vg"]
+bg_color = Color(0.380392, 0.380392, 0.380392, 1)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.380392, 0.380392, 0.380392, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8du6s"]
+bg_color = Color(0.180392, 0.180392, 0.180392, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.180392, 0.180392, 0.180392, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hdu60"]
+bg_color = Color(0.298039, 0.298039, 0.298039, 1)
+border_width_left = 5
+border_width_right = 5
+border_color = Color(0.298039, 0.298039, 0.298039, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s1eep"]
+bg_color = Color(0.27451, 0.27451, 0.27451, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.380392, 0.380392, 0.380392, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e7oki"]
+bg_color = Color(0.501961, 0.501961, 0.501961, 1)
+
+[node name="Menu" type="Control"]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_if5lm")
+script = ExtResource("2_l8j2c")
+
+[node name="Background" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_kg1h3")
+
+[node name="Rows" type="VBoxContainer" parent="Background"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Program" type="PanelContainer" parent="Background/Rows"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vkvra")
+
+[node name="Columns" type="HBoxContainer" parent="Background/Rows/Program"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Background/Rows/Program/Columns"]
+layout_mode = 2
+texture = ExtResource("3_8u7gh")
+expand_mode = 3
+
+[node name="Name" type="Label" parent="Background/Rows/Program/Columns"]
+layout_mode = 2
+theme = ExtResource("1_if5lm")
+theme_override_fonts/font = ExtResource("4_ghhnp")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_kuljg")
+text = "GeoWallE"
+
+[node name="Exit" type="Button" parent="Background/Rows/Program"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("1_if5lm")
+theme_override_fonts/font = ExtResource("5_y7hko")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_rhn7y")
+text = "x"
+
+[node name="Buttons" type="PanelContainer" parent="Background/Rows"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3ekh4")
+
+[node name="MarginContainer" type="MarginContainer" parent="Background/Rows/Buttons"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+
+[node name="Columns" type="HBoxContainer" parent="Background/Rows/Buttons/MarginContainer"]
+layout_mode = 2
+
+[node name="Compile" type="Button" parent="Background/Rows/Buttons/MarginContainer/Columns"]
+layout_mode = 2
+theme = ExtResource("1_if5lm")
+theme_override_fonts/font = ExtResource("4_ghhnp")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_w2x37")
+text = "Compile and Run"
+
+[node name="Save" type="Button" parent="Background/Rows/Buttons/MarginContainer/Columns"]
+layout_mode = 2
+theme = ExtResource("1_if5lm")
+theme_override_fonts/font = ExtResource("4_ghhnp")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_7e8vg")
+text = "Save
+"
+
+[node name="SaveAs" type="Button" parent="Background/Rows/Buttons/MarginContainer/Columns"]
+layout_mode = 2
+theme = ExtResource("1_if5lm")
+theme_override_fonts/font = ExtResource("4_ghhnp")
+text = "Save as"
+
+[node name="Columns" type="HBoxContainer" parent="Background/Rows"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="Left" type="MarginContainer" parent="Background/Rows/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="CodeEditor" type="VBoxContainer" parent="Background/Rows/Columns/Left"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="CodePanel" type="TextEdit" parent="Background/Rows/Columns/Left/CodeEditor"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("1_if5lm")
+theme_override_colors/font_color = Color(1, 0.576471, 0.109804, 1)
+theme_override_fonts/font = ExtResource("5_y7hko")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_8du6s")
+caret_blink = true
+caret_mid_grapheme = true
+highlight_all_occurrences = true
+highlight_current_line = true
+script = ExtResource("6_1746e")
+
+[node name="Errors" type="VBoxContainer" parent="Background/Rows/Columns/Left/CodeEditor"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="ErrorsLabel" type="Label" parent="Background/Rows/Columns/Left/CodeEditor/Errors"]
+layout_mode = 2
+theme = ExtResource("1_if5lm")
+theme_override_styles/normal = SubResource("StyleBoxFlat_hdu60")
+text = "Errors"
+
+[node name="ErrorPanel" type="TextEdit" parent="Background/Rows/Columns/Left/CodeEditor/Errors"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("1_if5lm")
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_y7hko")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_s1eep")
+editable = false
+
+[node name="Right" type="MarginContainer" parent="Background/Rows/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="CanvasPanel" type="PanelContainer" parent="Background/Rows/Columns/Right"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_e7oki")
+
+[node name="Canvas" type="CenterContainer" parent="Background/Rows/Columns/Right/CanvasPanel"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Panel" type="Panel" parent="Background/Rows/Columns/Right/CanvasPanel/Canvas"]
+layout_mode = 2
+
+[node name="SaveFileDialog" type="FileDialog" parent="."]
+title = "Save File"
+position = Vector2i(209, 36)
+size = Vector2i(576, 324)
+theme = ExtResource("1_if5lm")
+ok_button_text = "Save"
+dialog_hide_on_ok = true
+access = 2
+
+[connection signal="pressed" from="Background/Rows/Program/Exit" to="." method="OnExitPressed"]
+[connection signal="pressed" from="Background/Rows/Buttons/MarginContainer/Columns/Compile" to="." method="OnCompilePressed"]
+[connection signal="pressed" from="Background/Rows/Buttons/MarginContainer/Columns/Save" to="." method="OnSavePressed"]
+[connection signal="pressed" from="Background/Rows/Buttons/MarginContainer/Columns/SaveAs" to="." method="OnSaveAsPressed"]
+[connection signal="file_selected" from="SaveFileDialog" to="." method="OnSaveFileDialogFileSelected"]
