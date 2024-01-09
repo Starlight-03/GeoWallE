@@ -1,4 +1,4 @@
-using System;
+using Godot;
 
 public class Import : Statement
 {
@@ -6,10 +6,27 @@ public class Import : Statement
 
     public Import(string file, int line) : base(line) { this.file = file; }
 
-    public override bool Validate(IContext context) => true;
-
-    public override void Evaluate()
+    public override bool Validate(IContext context)
     {
-        throw new NotImplementedException();
+        if (!file.EndsWith(".geo"))
+            AddError("");
+        else{
+            Handler handler = new();
+            var f = FileAccess.Open("res://GeoFiles//" + file, FileAccess.ModeFlags.Read);
+            if (f is null)
+                AddError($"There wasn't found a .geo file that matches {file} file name");
+            else{
+                handler.Compile(f.GetAsText());
+                f.Close();
+
+                foreach (string error in handler.Errors)
+                    AddError(error);
+
+                context.Merge(handler.Program.GlobalContext);
+            }
+        }
+        return IsValid();
     }
+
+    public override void Evaluate() { }
 }

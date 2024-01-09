@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 public class GeoWallE_Program : ASTNode
 {
-	public List<GObject> DrawingObjects = new();
+	public List<GObject> DrawingObjects { get; private set; } = new();
+
+	public IContext GlobalContext { get; private set; } = new Context();
 
 	private readonly List<Statement> Statements;
-
-	private readonly IContext globalContext = new Context();
 
 	private Color color = Colors.Black;
 
@@ -16,7 +16,7 @@ public class GeoWallE_Program : ASTNode
 	public override bool Validate(IContext context = null)
 	{
 		foreach(var st in Statements)
-			if (!st.Validate(globalContext))
+			if (!st.Validate(GlobalContext))
 				return false;
 
 		return true;

@@ -1,5 +1,11 @@
+using System.Collections.Generic;
+
 public interface IContext
 {
+    public Dictionary<string, (ExpType, Expression)> Variables { get; }
+
+    public Dictionary<(string, int), (ExpType, Expression)> Functions { get; }
+
     bool VariableIsDefined(string variable, out (ExpType, Expression) variableValue);
 
     bool FunctionIsDefined(string function, int args, out (ExpType, Expression) functionBody);
@@ -17,4 +23,6 @@ public interface IContext
     Expression GetFunctionBody(string function, int args);
 
     IContext CreateChildContext();
+
+    void Merge(IContext other);
 }

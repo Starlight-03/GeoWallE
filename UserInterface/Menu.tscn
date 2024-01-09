@@ -77,6 +77,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("1_if5lm")
 script = ExtResource("2_l8j2c")
+metadata/_edit_use_anchors_ = true
 
 [node name="Background" type="PanelContainer" parent="."]
 layout_mode = 1
@@ -86,6 +87,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_kg1h3")
+metadata/_edit_use_anchors_ = true
 
 [node name="Rows" type="VBoxContainer" parent="Background"]
 layout_mode = 2

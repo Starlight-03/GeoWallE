@@ -53,7 +53,7 @@ public partial class Menu : Control
 			canvas.RemoveChild(child);
 		canvas.QueueRedraw();
 
-		SaveFile();
+		if (currentFile is "Untitled") PopUpSaveFileDialog();
 		var file = FileAccess.Open(currentFile, FileAccess.ModeFlags.Read);
 		handler.Compile(file.GetAsText());
 		file.Close();

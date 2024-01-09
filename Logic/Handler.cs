@@ -6,6 +6,8 @@ public class Handler
 
 	public List<string> Errors { get; private set; } = new();
 
+	public GeoWallE_Program Program { get; private set; } = new(new List<Statement>());
+
 	private string statements = "";
 
 	public void Compile(string statements)
@@ -24,12 +26,12 @@ public class Handler
 			Errors = parser.Errors;
 			return;
 		}
-		GeoWallE_Program program = parser.Program;
-		if (!program.Validate()){
-			Errors = program.Errors;
+		Program = parser.Program;
+		if (!Program.Validate()){
+			Errors = Program.Errors;
 			return;
 		}
-		program.Evaluate();
-		DrawingObjects = program.DrawingObjects;
+		Program.Evaluate();
+		DrawingObjects = Program.DrawingObjects;
 	}
 }

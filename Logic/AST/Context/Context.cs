@@ -5,36 +5,36 @@ public class Context : IContext
 {
     private readonly IContext parent;
 
-    private readonly Dictionary<string, (ExpType, Expression)> variables = new();
+    public Dictionary<string, (ExpType, Expression)> Variables { get; private set; } = new();
 
-    private readonly Dictionary<(string, int), (ExpType, Expression)> functions = new();
+    public Dictionary<(string, int), (ExpType, Expression)> Functions { get; private set; } = new();
 
     public Context()
     {
-        variables["PI"] = (ExpType.Number, new Number(MathF.PI.ToString()));
-        variables["E"] = (ExpType.Number, new Number(MathF.E.ToString()));
-        functions[("sin", 1)] = (ExpType.Number, new Sin());
-        functions[("cos", 1)] = (ExpType.Number, new Cos());
-        functions[("log", 2)] = (ExpType.Number, new Log());
-        functions[("ln", 1)] = (ExpType.Number, new Ln());
+        Variables["PI"] = (ExpType.Number, new Number(MathF.PI.ToString()));
+        Variables["E"] = (ExpType.Number, new Number(MathF.E.ToString()));
+        Functions[("sin", 1)] = (ExpType.Number, new Sin());
+        Functions[("cos", 1)] = (ExpType.Number, new Cos());
+        Functions[("log", 2)] = (ExpType.Number, new Log());
+        Functions[("ln", 1)] = (ExpType.Number, new Ln());
     }
 
     public Context(IContext parent) => this.parent = parent;
 
     public bool VariableIsDefined(string variable, out (ExpType, Expression) variableValue) 
-    => variables.TryGetValue(variable, out variableValue) || (parent != null && parent.VariableIsDefined(variable, out variableValue));
+    => Variables.TryGetValue(variable, out variableValue) || (parent != null && parent.VariableIsDefined(variable, out variableValue));
 
     public bool FunctionIsDefined(string function, int args, out (ExpType, Expression) functionBody) 
-    => functions.TryGetValue((function, args), out functionBody) 
+    => Functions.TryGetValue((function, args), out functionBody) 
         || parent != null && parent.FunctionIsDefined(function, args, out functionBody);
 
     public void DefineVariable(string variable, ExpType type, Expression value = null) 
-    => variables.Add(variable, (type, value));
+    => Variables.Add(variable, (type, value));
 
     public void DefineFunction(string function, int args, ExpType type, Expression body)
     {
         if (!FunctionIsDefined(function, args, out (ExpType, Expression) functionBody))
-            functions[(function, args)] = (type, body);
+            Functions[(function, args)] = (type, body);
     }
 
     public void SetFunctionType(string function, int args, ExpType type) 
@@ -56,4 +56,15 @@ public class Context : IContext
     => FunctionIsDefined(function, args, out (ExpType, Expression) functionBody) ? functionBody.Item2 : null;
     
     public IContext CreateChildContext() => new Context(this);
+
+    public void Merge(IContext other)
+    {
+        foreach (var item in other.Variables)
+            if (!Variables.ContainsKey(item.Key))
+                Variables[item.Key] = item.Value;
+
+        foreach (var item in other.Functions)
+            if (!Functions.ContainsKey(item.Key))
+                Functions[item.Key] = item.Value;
+    }
 }
