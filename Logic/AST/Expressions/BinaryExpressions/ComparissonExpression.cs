@@ -4,17 +4,17 @@ public abstract class ComparisonExpression : BinaryExpression
 
     protected double rightVal;
 
-    protected ComparisonExpression(int line, Expression left, Expression right) : base(line, left, right){}
+    protected ComparisonExpression(int line, Expression left, Expression right) : base(line, left, right)
+    => Type = ExpType.Number;
 
     public override bool Validate(IContext context)
     {
         if (!base.Validate(context))
             return false;
 
-        if (left.Type != ExpType.Number && left.Type != ExpType.Number) 
-            AddError("");
-        if (left.Type != ExpType.Measure && left.Type != ExpType.Measure)
-            AddError("");
+        if ((left.Type is ExpType.Number && right.Type is not ExpType.Number) 
+            || (left.Type is ExpType.Measure && right.Type is not ExpType.Measure))
+                AddError("");
 
         return IsValid();
     }
@@ -35,7 +35,7 @@ public class Minor : ComparisonExpression
     public override void Evaluate()
     {
         base.Evaluate();
-        Value = (leftVal < rightVal).ToString();
+        Value = (leftVal < rightVal) ? "1" : "0";
     }
 }
 
@@ -46,7 +46,7 @@ public class MinorEqual : ComparisonExpression
     public override void Evaluate()
     {
         base.Evaluate();
-        Value = (leftVal <= rightVal).ToString();
+        Value = (leftVal <= rightVal) ? "1" : "0";
     }
 }
 
@@ -57,7 +57,7 @@ public class Major : ComparisonExpression
     public override void Evaluate()
     {
         base.Evaluate();
-        Value = (leftVal > rightVal).ToString();
+        Value = (leftVal > rightVal) ? "1" : "0";
     }
 }
 
@@ -68,7 +68,7 @@ public class MajorEqual : ComparisonExpression
     public override void Evaluate()
     {
         base.Evaluate();
-        Value = (leftVal >= rightVal).ToString();
+        Value = (leftVal >= rightVal) ? "1" : "0";
     }
 }
 
@@ -79,7 +79,7 @@ public class Equals : ComparisonExpression
     public override void Evaluate()
     {
         base.Evaluate();
-        Value = (leftVal == rightVal).ToString();
+        Value = (leftVal == rightVal) ? "1" : "0";
     }
 }
 
@@ -90,6 +90,6 @@ public class NotEqual : ComparisonExpression
     public override void Evaluate()
     {
         base.Evaluate();
-        Value = (leftVal != rightVal).ToString();
+        Value = (leftVal != rightVal) ? "1" : "0";
     }
 }

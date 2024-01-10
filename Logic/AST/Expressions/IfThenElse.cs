@@ -1,5 +1,3 @@
-using System;
-
 public class IfThenElse : Expression
 {
     private readonly Expression condition;
@@ -15,12 +13,39 @@ public class IfThenElse : Expression
         this.negative = negative;
     }
 
-    public override bool Validate(IContext context) => condition.Validate(context) 
-                                                        && positive.Validate(context)
-                                                        && negative.Validate(context);
+    public override bool Validate(IContext context)
+    {
+        if (!condition.Validate(context))
+            AddError("");
+        if (!positive.Validate(context))
+            AddError("");
+        if (!negative.Validate(context))
+            AddError("");
+        if (positive.Type != negative.Type)
+            AddError("");
+        else
+            Type = positive.Type;
+        
+        return IsValid();
+    }
 
     public override void Evaluate()
     {
-        throw new NotImplementedException();
+        condition.Evaluate();
+        if (BooleanEvaluator.Evaluate(condition))
+            Evaluate(positive);
+        else
+            Evaluate(negative);
+
+        void Evaluate(Expression expression){
+            expression.Evaluate();
+            if (expression.Type is ExpType.Number || expression.Type is ExpType.Text 
+                || expression.Type is ExpType.Measure)
+                    Value = expression.Value;
+            else if (expression.Type is ExpType.Sequence)
+                Seq = expression.Seq;
+            else 
+                Object = expression.Object;
+        }
     }
 }

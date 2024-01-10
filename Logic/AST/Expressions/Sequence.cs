@@ -44,6 +44,7 @@ public class Sequence : Expression
     {
         foreach (var item in Values)
             item.Evaluate();
+        Seq = this;
     }
 
     public void Concat(Sequence other)
