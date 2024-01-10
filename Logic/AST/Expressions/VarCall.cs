@@ -4,7 +4,7 @@ public class VarCall : Expression
 
     private IContext context;
 
-    public VarCall(string identifier, int line) : base(line) => this.identifier = identifier;
+    public VarCall(int line, string identifier) : base(line) => this.identifier = identifier;
 
     public override bool Validate(IContext context)
     {

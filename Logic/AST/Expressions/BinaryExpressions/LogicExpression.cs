@@ -2,7 +2,7 @@ using System;
 
 public abstract class LogicExpression : BinaryExpression
 {
-    protected LogicExpression(Expression left, Expression right, int line) : base(left, right, line){}
+    protected LogicExpression(int line, Expression left, Expression right) : base(line, left, right){}
 
     public override bool Validate(IContext context) => base.Validate(context);
 
@@ -10,20 +10,20 @@ public abstract class LogicExpression : BinaryExpression
     {
         left.Evaluate();
         right.Evaluate();
-        // Algo más
+        // ! Algo más
     }
 }
 
 public class And : LogicExpression
 {
-    public And(Expression left, Expression right, int line) : base(left, right, line) => op = "and";
+    public And(int line, Expression left, Expression right) : base(line, left, right) => op = "and";
 
     public override void Evaluate() => throw new NotImplementedException(); // Value = (double.Parse(left.Evaluate()) && double.Parse(right.Evaluate())).ToString();
 }
 
 public class Or : LogicExpression
 {
-    public Or(Expression left, Expression right, int line) : base(left, right, line) => op = "or";
+    public Or(int line, Expression left, Expression right) : base(line, left, right) => op = "or";
 
     public override void Evaluate() => throw new NotImplementedException(); // Value = (double.Parse(left.Evaluate()) || double.Parse(right.Evaluate())).ToString();
 }

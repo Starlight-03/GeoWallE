@@ -8,7 +8,7 @@ public class IfThenElse : Expression
 
     private readonly Expression negative;
 
-    public IfThenElse(Expression condition, Expression positive, Expression negative, int line) : base(line)
+    public IfThenElse(int line, Expression condition, Expression positive, Expression negative) : base(line)
     {
         this.condition = condition;
         this.positive = positive;

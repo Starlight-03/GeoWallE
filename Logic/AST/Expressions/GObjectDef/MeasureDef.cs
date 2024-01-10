@@ -6,7 +6,7 @@ public class MeasureDef : Expression
 
     private readonly Expression p2;
 
-    public MeasureDef(Expression p1, Expression p2, int line) : base(line)
+    public MeasureDef(int line, Expression p1, Expression p2) : base(line)
     {
         this.p1 = p1;
         this.p2 = p2;

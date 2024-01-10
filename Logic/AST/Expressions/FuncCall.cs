@@ -8,7 +8,7 @@ public class FuncCall : Expression
 
     private IContext context;
 
-    public FuncCall(string identifier, List<Expression> args, int line) : base(line)
+    public FuncCall(int line, string identifier, List<Expression> args) : base(line)
     {
         this.identifier = identifier;
         this.args = args;

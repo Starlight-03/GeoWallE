@@ -90,7 +90,7 @@ public class LexReader
 
     public bool IsOperatorOrSeparator(out Token token)
     {
-        foreach (string op in Token.GetTokens(t => t.Type == TokenType.Operator && t.Value.Length == 2)){
+        foreach (string op in Token.GetTokens(t => t.Type == TokenType.Operator && t.Value.Length >= 2)){
             if (Look() == op[0] && LookAhead() == op[1]){
                 token = Token.GetToken(op);
                 Move(2);

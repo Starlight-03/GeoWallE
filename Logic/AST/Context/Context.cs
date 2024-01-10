@@ -17,6 +17,10 @@ public class Context : IContext
         Functions[("cos", 1)] = (ExpType.Number, new Cos());
         Functions[("log", 2)] = (ExpType.Number, new Log());
         Functions[("ln", 1)] = (ExpType.Number, new Ln());
+        Functions[("intersect", 2)] = (ExpType.Sequence, new Intersect());
+        Functions[("points", 1)] = (ExpType.Sequence, new Points());
+        Functions[("samples", 0)] = (ExpType.Sequence, new Samples());
+        Functions[("randoms", 0)] = (ExpType.Sequence, new Randoms());
     }
 
     public Context(IContext parent) => this.parent = parent;

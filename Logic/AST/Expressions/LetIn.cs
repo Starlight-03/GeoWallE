@@ -6,7 +6,7 @@ public class LetIn : Expression
 
     private readonly Expression body;
 
-    public LetIn(List<Statement> statements, Expression body, int line) : base(line)
+    public LetIn(int line, List<Statement> statements, Expression body) : base(line)
     {
         this.statements = statements;
         this.body = body;

@@ -6,7 +6,7 @@ public abstract class ArithmeticExpression : BinaryExpression
 
     protected float rightVal;
 
-    protected ArithmeticExpression(Expression left, Expression right, int line) : base(left, right, line)
+    protected ArithmeticExpression(int line, Expression left, Expression right) : base(line, left, right)
     => Type = ExpType.Number;
 
     public override bool Validate(IContext context)
@@ -41,7 +41,7 @@ public abstract class ArithmeticExpression : BinaryExpression
 
 public class Sum : ArithmeticExpression
 {
-    public Sum(Expression left, Expression right, int line) : base(left, right, line) => op = "+";
+    public Sum(int line, Expression left, Expression right) : base(line, left, right) => op = "+";
 
     public override void Evaluate()
     {
@@ -53,7 +53,7 @@ public class Sum : ArithmeticExpression
 
 public class Sub : ArithmeticExpression
 {
-    public Sub(Expression left, Expression right, int line) : base(left, right, line) => op = "-";
+    public Sub(int line, Expression left, Expression right) : base(line, left, right) => op = "-";
 
     public override void Evaluate()
     {
@@ -65,7 +65,7 @@ public class Sub : ArithmeticExpression
 
 public class Mul : ArithmeticExpression
 {
-    public Mul(Expression left, Expression right, int line) : base(left, right, line) => op = "*";
+    public Mul(int line, Expression left, Expression right) : base(line, left, right) => op = "*";
 
     public override void Evaluate()
     {
@@ -77,7 +77,7 @@ public class Mul : ArithmeticExpression
 
 public class Div : ArithmeticExpression
 {
-    public Div(Expression left, Expression right, int line) : base(left, right, line) => op = "/";
+    public Div(int line, Expression left, Expression right) : base(line, left, right) => op = "/";
 
     public override void Evaluate()
     {
@@ -89,7 +89,7 @@ public class Div : ArithmeticExpression
 
 public class Mod : ArithmeticExpression
 {
-    public Mod(Expression left, Expression right, int line) : base(left, right, line) => op = "%";
+    public Mod(int line, Expression left, Expression right) : base(line, left, right) => op = "%";
 
     public override void Evaluate()
     {
@@ -101,7 +101,7 @@ public class Mod : ArithmeticExpression
 
 public class Pow : ArithmeticExpression
 {
-    public Pow(Expression left, Expression right, int line) : base(left, right, line) => op = "^";
+    public Pow(int line, Expression left, Expression right) : base(line, left, right) => op = "^";
 
     public override void Evaluate()
     {

@@ -4,13 +4,22 @@ public class Sequence : Expression
 {
     public readonly List<Expression> Values;
 
-    public ExpType valType;
+    public ExpType ValType { get; private set; }
 
-    public Sequence(List<Expression> values, int line, ExpType valType = ExpType.Undefined) : base(line)
+    public Sequence(int line, List<Expression> values, ExpType valType = ExpType.Undefined) : base(line)
     {
         Values = values;
-        this.valType = valType;
+        this.ValType = valType;
         Type = ExpType.Sequence;
+    }
+
+    public Sequence(int line, int start, int end = int.MaxValue) : base(line)
+    {
+        Type = ExpType.Sequence;
+        ValType = ExpType.Number;
+        Values = new List<Expression>();
+        for (int i = start; i <= end; i++)
+            Values.Add(new Number(i));
     }
 
     public int Count => Values.Count;
@@ -22,9 +31,9 @@ public class Sequence : Expression
         foreach (var item in Values){
             if (!item.Validate(context))
                 return false;
-            if (valType == ExpType.Undefined)
-                valType = item.Type;
-            else if (item.Type != valType)
+            if (ValType == ExpType.Undefined)
+                ValType = item.Type;
+            else if (item.Type != ValType)
                 return false;
         }
         

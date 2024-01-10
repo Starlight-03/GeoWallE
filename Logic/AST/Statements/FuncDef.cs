@@ -8,7 +8,7 @@ public class FuncDef : Statement
     
     private readonly Expression body;
 
-    public FuncDef(string identifier, List<string> args, Expression body, int line) : base(line)
+    public FuncDef(int line, string identifier, List<string> args, Expression body) : base(line)
     {
         this.identifier = identifier;
         this.args = args;

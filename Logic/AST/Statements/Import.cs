@@ -4,7 +4,7 @@ public class Import : Statement
 {
     private readonly string file;
 
-    public Import(string file, int line) : base(line) { this.file = file; }
+    public Import(int line, string file) : base(line) => this.file = file;
 
     public override bool Validate(IContext context)
     {

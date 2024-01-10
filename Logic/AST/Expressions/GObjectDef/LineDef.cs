@@ -8,7 +8,7 @@ public class LineDef : Expression
 
     protected Point point2;
 
-    public LineDef(Expression p1, Expression p2, int line) : base(line)
+    public LineDef(int line, Expression p1, Expression p2) : base(line)
     {
         this.p1 = p1;
         this.p2 = p2;
@@ -30,7 +30,7 @@ public class LineDef : Expression
 
 public class RayDef : LineDef
 {
-    public RayDef(Expression p1, Expression p2, int line) : base(p1, p2, line) { }
+    public RayDef(int line, Expression p1, Expression p2) : base(line, p1, p2) { }
 
     public override void Evaluate()
     {
@@ -41,7 +41,7 @@ public class RayDef : LineDef
 
 public class SegmentDef : LineDef
 {
-    public SegmentDef(Expression p1, Expression p2, int line) : base(p1, p2, line) { }
+    public SegmentDef(int line, Expression p1, Expression p2) : base(line, p1, p2) { }
 
     public override void Evaluate()
     {

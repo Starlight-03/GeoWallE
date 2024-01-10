@@ -4,7 +4,7 @@ public class LogicNot : Expression
 {
     private readonly Expression expression;
 
-    public LogicNot(Expression expression, int line) : base(line) => this.expression = expression;
+    public LogicNot(int line, Expression expression) : base(line) => this.expression = expression;
 
     public override bool Validate(IContext context)
     {

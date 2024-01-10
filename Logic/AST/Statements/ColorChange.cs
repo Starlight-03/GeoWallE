@@ -4,12 +4,12 @@ public class ColorChange : Statement
 {
     public readonly Color Color;
 
-    public ColorChange(Color color, int line) : base(line) => Color = color;
+    public ColorChange(int line, Color color) : base(line) => Color = color;
 
     public override bool Validate(IContext context) => true;
 }
 
 public class Restore : ColorChange
 {
-    public Restore(int line) : base(Colors.Black, line) {}
+    public Restore(int line) : base(line, Colors.Black) { }
 }

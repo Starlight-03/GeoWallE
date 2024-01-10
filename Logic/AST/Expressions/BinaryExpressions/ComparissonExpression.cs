@@ -4,7 +4,7 @@ public abstract class ComparisonExpression : BinaryExpression
 
     protected double rightVal;
 
-    protected ComparisonExpression(Expression left, Expression right, int line) : base(left, right, line){}
+    protected ComparisonExpression(int line, Expression left, Expression right) : base(line, left, right){}
 
     public override bool Validate(IContext context)
     {
@@ -30,7 +30,7 @@ public abstract class ComparisonExpression : BinaryExpression
 
 public class Minor : ComparisonExpression
 {
-    public Minor(Expression left, Expression right, int line) : base(left, right, line) => op = "<";
+    public Minor(int line, Expression left, Expression right) : base(line, left, right) => op = "<";
 
     public override void Evaluate()
     {
@@ -41,7 +41,7 @@ public class Minor : ComparisonExpression
 
 public class MinorEqual : ComparisonExpression
 {
-    public MinorEqual(Expression left, Expression right, int line) : base(left, right, line) => op = "<=";
+    public MinorEqual(int line, Expression left, Expression right) : base(line, left, right) => op = "<=";
 
     public override void Evaluate()
     {
@@ -52,7 +52,7 @@ public class MinorEqual : ComparisonExpression
 
 public class Major : ComparisonExpression
 {
-    public Major(Expression left, Expression right, int line) : base(left, right, line) => op = ">";
+    public Major(int line, Expression left, Expression right) : base(line, left, right) => op = ">";
 
     public override void Evaluate()
     {
@@ -63,7 +63,7 @@ public class Major : ComparisonExpression
 
 public class MajorEqual : ComparisonExpression
 {
-    public MajorEqual(Expression left, Expression right, int line) : base(left, right, line) => op = ">=";
+    public MajorEqual(int line, Expression left, Expression right) : base(line, left, right) => op = ">=";
 
     public override void Evaluate()
     {
@@ -74,7 +74,7 @@ public class MajorEqual : ComparisonExpression
 
 public class Equals : ComparisonExpression
 {
-    public Equals(Expression left, Expression right, int line) : base(left, right, line) => op = "==";
+    public Equals(int line, Expression left, Expression right) : base(line, left, right) => op = "==";
 
     public override void Evaluate()
     {
@@ -85,7 +85,7 @@ public class Equals : ComparisonExpression
 
 public class NotEqual : ComparisonExpression
 {
-    public NotEqual(Expression left, Expression right, int line) : base(left, right, line) => op = "!=";
+    public NotEqual(int line, Expression left, Expression right) : base(line, left, right) => op = "!=";
 
     public override void Evaluate()
     {

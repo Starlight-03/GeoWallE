@@ -6,7 +6,7 @@ public abstract class BinaryExpression : Expression
 
     protected readonly Expression right;
 
-    public BinaryExpression(Expression left, Expression right, int line) : base(line)
+    public BinaryExpression(int line, Expression left, Expression right) : base(line)
     {
         op = "";
         this.left = left;
@@ -26,7 +26,7 @@ public abstract class BinaryExpression : Expression
 
 public class Concat : BinaryExpression
 {
-    public Concat(Expression left, Expression right, int line) : base(left, right, line) 
+    public Concat(int line, Expression left, Expression right) : base(line, left, right) 
     => Type = ExpType.Sequence;
 
     public override bool Validate(IContext context)

@@ -8,7 +8,7 @@ public class CircleDef : Expression
 
     private readonly Expression radius;
 
-    public CircleDef(Expression center, Expression radius, int line) : base(line)
+    public CircleDef(int line, Expression center, Expression radius) : base(line)
     {
         this.center = center;
         this.radius = radius;
@@ -35,7 +35,7 @@ public class ArcDef : CircleDef
 
     private readonly Expression p2;
 
-    public ArcDef(Expression center, Expression p1, Expression p2, Expression radius, int line) : base(center, radius, line)
+    public ArcDef(int line, Expression center, Expression p1, Expression p2, Expression radius) : base(line, center, radius)
     {
         this.p1 = p1;
         this.p2 = p2;

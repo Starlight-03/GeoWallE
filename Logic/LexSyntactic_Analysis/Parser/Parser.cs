@@ -31,7 +31,7 @@ public class Parser : IParser
             if (!reader.Match(TokenType.Text))
                 AddError(reader.Line, "Expected name of \'.geo\' file as \'text\' to import", reader.NextIs(";"));
             else
-                statements.Add(new Import(reader.LookBack().Value, reader.Line));
+                statements.Add(new Import(reader.Line, reader.LookBack().Value));
 
             if (!reader.Match(";"))
                 AddError(reader.Line, "Missing \';\' at end of statement");
@@ -57,7 +57,7 @@ public class Parser : IParser
             else if (reader.Match("draw")){
                 Expression expression = ParseExpression();
                 var nameTag = new Text(reader.Match(TokenType.Text) ? reader.LookBack().Value : "");
-                return ParseStatement_((expression is not null) ? new Draw(expression, nameTag, reader.Line) : null);
+                return ParseStatement_((expression is not null) ? new Draw(reader.Line, expression, nameTag) : null);
             }
             else if (reader.Match("_"))
                 return ParseStatement_(reader.Match(",") ? ParseMatchDecl() : ParseVarDef());
@@ -105,18 +105,19 @@ public class Parser : IParser
                         : TypeIs("arc")     ? ExpType.Arc 
                         : TypeIs("measure") ? ExpType.Measure 
                         : TypeIs("number")  ? ExpType.Number : ExpType.Undefined;
-        
-        VarDecl decl;
 
         if (reader.Match("sequence"))
-            decl = new SequenceDecl(type, reader.Current().Value, reader.Line);
+            return new SequenceDecl(reader.Line, type, Identifier(), reader.Match("=") ? ParseExpression() : null);
         else
-            decl = new VarDecl(type, reader.Current().Value, reader.Line);
+            return new VarDecl(reader.Line, type, Identifier(), reader.Match("=") ? ParseExpression() : null);
 
-        if (!reader.Match(TokenType.Identifier))
-            AddError(reader.Line, $"Expected \'identifier\' after \'{varType} variable\' declaration", reader.NextIs(";"));
-
-        return decl;
+        string Identifier(){
+            if (!reader.Match(TokenType.Identifier)){
+                AddError(reader.Line, $"Expected \'identifier\' after \'{varType} variable\' declaration", reader.NextIs(";"));
+                return "";
+            }
+            return reader.LookBack().Value;
+        }
     }
 
     private ColorChange ParseColorChange()
@@ -135,7 +136,7 @@ public class Parser : IParser
         if (color == Colors.Violet)
             AddError(reader.Line, "Expected \'color type\' after \'color change\' declaration", reader.NextIs(";"));
 
-        return new ColorChange(color, reader.Line);
+        return new ColorChange(reader.Line, color);
     }
 
     private VarDef ParseVarDef()
@@ -149,7 +150,7 @@ public class Parser : IParser
         if (arg is null)
             AddError(reader.Line, $"Invalid expression after variable \'{id}\'");
 
-        return (arg is not null) ? new VarDef(id, arg, reader.Line) : null;
+        return (arg is not null) ? new VarDef(reader.Line, id, arg) : null;
     }
 
     private FuncDef ParseFuncDef()
@@ -177,7 +178,7 @@ public class Parser : IParser
         if (body is null)
             AddError(reader.Line, $"Invalid expression at \'{id}\' function definition body");
 
-        return (body is not null) ? new FuncDef(id, args, body, reader.Line) : null;
+        return (body is not null) ? new FuncDef(reader.Line, id, args, body) : null;
     }
 
     private MatchDecl ParseMatchDecl()
@@ -199,7 +200,7 @@ public class Parser : IParser
         if (expression is null)
             AddError(reader.Line, "Invalid expression at \'match declaration\'");
 
-        return (expression is not null) ? new MatchDecl(IDs, expression, reader.Line) : null;
+        return (expression is not null) ? new MatchDecl(reader.Line, IDs, expression) : null;
     }
 
     private Expression ParseExpression()
@@ -207,7 +208,7 @@ public class Parser : IParser
         if (reader.Match("not")){
             Expression exp = ParseExpression_();
             if (exp is null) AddError(reader.Line, "Invalid expression after \'not\' operator");
-            return (exp is not null) ? ParseLogicOp(new LogicNot(exp, reader.Line)) : null;
+            return (exp is not null) ? ParseLogicOp(new LogicNot(reader.Line, exp)) : null;
         }
         return ParseLogicOp(ParseExpression_());
 
@@ -222,13 +223,13 @@ public class Parser : IParser
                 if (reader.Match("+")){
                     Expression right = reader.Match("{") ? ParseSequence() : reader.Match("undefined") ? new Undefined() : null;
                     if (right is null) AddError(reader.Line, "Invalid expression after \'+\' operator");
-                    return (right is not null) ? new Concat(new Undefined(), right, reader.Line) : null;
+                    return (right is not null) ? new Concat(reader.Line, new Undefined(), right) : null;
                 }
                 return new Undefined();
             }
             else if (reader.Match(TokenType.Text))              return new Text(reader.LookBack().Value);
             else if (reader.Current().Type == TokenType.Number) return ParseCompOp(ParseNumericalExpression());
-            else if (reader.Match(TokenType.Identifier))        return ParseCompOp(X(Y(reader.Match("(") ? ParseFuncCall() : new VarCall(reader.LookBack().Value, reader.Line))));
+            else if (reader.Match(TokenType.Identifier))        return ParseCompOp(X(Y(reader.Match("(") ? ParseFuncCall() : new VarCall(reader.Line, reader.LookBack().Value))));
             else if (reader.Match("(")){
                 Expression exp = ParseExpression();
                 if (exp is null) AddError(reader.Line, "Invalid expression after \'(\'");
@@ -262,15 +263,14 @@ public class Parser : IParser
             AddError(reader.Line, $"Object arc must have 4 args");
 
         return (args.Count == 2) ? 
-                    ((obj is "point") ? new PointDef(args[0], args[1], reader.Line) : 
-                    (obj is "line") ? new LineDef(args[0], args[1], reader.Line) : 
-                    (obj is "ray") ? new RayDef(args[0], args[1], reader.Line) : 
-                    (obj is "segment") ? new SegmentDef(args[0], args[1], reader.Line) : 
-                    (obj is "measure") ? new MeasureDef(args[0], args[1], reader.Line) : 
-                    (obj is "circle") ? new CircleDef(args[0], args[1], reader.Line) : 
-                    (obj is "intersect") ? new IntersectionDef(args[0], args[1], reader.Line) : null) :
+                    ((obj is "point") ? new PointDef(reader.Line, args[0], args[1]) : 
+                    (obj is "line") ? new LineDef(reader.Line, args[0], args[1]) : 
+                    (obj is "ray") ? new RayDef(reader.Line, args[0], args[1]) : 
+                    (obj is "segment") ? new SegmentDef(reader.Line, args[0], args[1]) : 
+                    (obj is "measure") ? new MeasureDef(reader.Line, args[0], args[1]) : 
+                    (obj is "circle") ? new CircleDef(reader.Line, args[0], args[1]) : null) : 
                 (args.Count == 4 && obj is "arc") ? 
-                    new ArcDef(args[0], args[1], args[2], args[3], reader.Line) : null;
+                    new ArcDef(reader.Line, args[0], args[1], args[2], args[3]) : null;
     }
 
     private IfThenElse ParseIfThenElse()
@@ -294,7 +294,7 @@ public class Parser : IParser
             AddError(reader.Line, "Invalid negative expression after \'else\' keyword at \'if-then-else\' expression");
 
         return (condition is not null && positive is not null && negative is not null) ? 
-                new IfThenElse(condition, positive, negative, reader.Line) : null;
+                new IfThenElse(reader.Line, condition, positive, negative) : null;
     }
 
     private LetIn ParseLetIn()
@@ -315,7 +315,7 @@ public class Parser : IParser
         if (body is null) 
             AddError(reader.Line, "Invalid expression after \'in\' in \'let-in\' expression");
 
-        return (body is null) ? null : new LetIn(statements, body, reader.Line);
+        return (body is null) ? null : new LetIn(reader.Line, statements, body);
     }
 
     private Expression ParseSequence()
@@ -323,37 +323,52 @@ public class Parser : IParser
         // { <e1>, <e2>, ... , <en> } (+ <sequency> | undefined)
         var values = new List<Expression>();
         while (!reader.EOS && !reader.CurrentIs("}")) {
+            if (reader.Match("...")){
+                int end = reader.Match(TokenType.Number) ? int.Parse(reader.LookBack().Value) : int.MaxValue;
+                return ReturnSequence(new(reader.Line, int.MinValue, end));
+            }
             var expression = ParseExpression();
-
             if (expression is null) AddError(reader.Line, "Invalid expression at sequence definition");
-            else values.Add(expression);
-            
+            else{
+                if (reader.Match("...")){
+                    int start = int.MinValue;
+                    if (reader.LookBack(2).Type is not TokenType.Number) AddError(reader.Line, "");
+                    else start = int.Parse(reader.LookBack(2).Value);
+                    Sequence sequence = reader.CurrentIs("}") ? new(reader.Line, start) : 
+                                            reader.Match(TokenType.Number) ? new(reader.Line, start, int.Parse(reader.LookBack().Value)) : null;
+                    return ReturnSequence(sequence);
+                }
+                values.Add(expression);
+            }
             if (!reader.Match(",") && !reader.CurrentIs("}")) AddError(reader.Line, "Expected \',\' at sequence definition");
             else if (reader.CurrentIs("}") && reader.LookBack().Value == ",") AddError(reader.Line, "Invalid expression at sequence definition");
         }
-        if (!reader.Match("}"))
-            AddError(reader.Line, "Missing \'}\' at sequence definition");
+        return ReturnSequence(new(reader.Line, values));
 
-        if (reader.Match("+")){
-            Expression expr = SequenceSum(new Sequence(values, reader.Line));
-            if (expr is null) AddError(reader.Line, "Expected sequence expression");
-            return (expr is not null) ? expr : null;
+        Expression ReturnSequence(Sequence sequence){
+            if (!reader.Match("}"))
+                AddError(reader.Line, "Missing \'}\' at sequence definition");
+            if (reader.Match("+")){
+                Expression expr = SequenceSum(sequence);
+                if (expr is null) AddError(reader.Line, "Expected sequence expression");
+                return (expr is not null) ? expr : null;
+            }
+            return sequence;
         }
-        return new Sequence(values, reader.Line);
 
         Concat SequenceSum(Expression left){
             if (reader.Match("{")){
                 Expression right = ParseSequence();
                 if (right is null) AddError(reader.Line, "Invalid sequence expression after \'+\' operator");
-                return (right is not null) ? new Concat(left, right, reader.Line) : null;
+                return (right is not null) ? new Concat(reader.Line, left, right) : null;
             }
             if (reader.Match("undefined")){
                 if (reader.Match("+")){
                     Expression right = SequenceSum(new Undefined());
                     if (right is null) AddError(reader.Line, "Invalid sequence expression after \'+\' operator");
-                    return (right is not null) ? new Concat(left, right, reader.Line) : null;
+                    return (right is not null) ? new Concat(reader.Line, left, right) : null;
                 }
-                return new Concat(left, new Undefined(), reader.Line);
+                return new Concat(reader.Line, left, new Undefined());
             }
             return null;
         }
@@ -378,7 +393,7 @@ public class Parser : IParser
         if (!reader.Match(")"))
             AddError(reader.Line, $"Missing \')\' at \'{id}\' function call");
 
-        return new FuncCall(id, args, reader.Line);
+        return new FuncCall(reader.Line, id, args);
     }
 
     public Expression ParseNumericalExpression()
@@ -393,7 +408,7 @@ public class Parser : IParser
             return Y(ParseObjectDef("measure"));
 
         else if (reader.Match(TokenType.Identifier))
-            return Y(reader.Match("(") ? ParseFuncCall() : new VarCall(reader.Current().Value, reader.Line));
+            return Y(reader.Match("(") ? ParseFuncCall() : new VarCall(reader.Line, reader.Current().Value));
 
         else if (reader.Match("(")){
             Expression term = ParseNumericalExpression();
@@ -427,7 +442,7 @@ public class Parser : IParser
         else
             right = Y(reader.Match(TokenType.Number) ? new Number(reader.LookBack().Value) : 
                         reader.Match(TokenType.Identifier) ? reader.Match("(") ? ParseFuncCall() : 
-                            new VarCall(reader.LookBack().Value, reader.Line) : 
+                            new VarCall(reader.Line, reader.LookBack().Value) : 
                         null);
 
         if (right is null){
@@ -435,7 +450,7 @@ public class Parser : IParser
             return null;
         }
 
-        return X(op is "+" ? new Sum(left, right, reader.Line) : new Sub(left, right, reader.Line));
+        return X(op is "+" ? new Sum(reader.Line, left, right) : new Sub(reader.Line, left, right));
     }
 
     public Expression Y(Expression left)
@@ -456,7 +471,7 @@ public class Parser : IParser
         else
             right = reader.Match(TokenType.Number) ? new Number(reader.LookBack().Value) : 
                         reader.Match(TokenType.Identifier) ? reader.Match("(") ? ParseFuncCall() : 
-                            new VarCall(reader.LookBack().Value, reader.Line) : 
+                            new VarCall(reader.Line, reader.LookBack().Value) : 
                         null;
 
         if (right is null){
@@ -464,9 +479,9 @@ public class Parser : IParser
             return null;
         }
 
-        return Y(op is "*" ? new Mul(left, right, reader.Line) : 
-                op is "/" ? new Div(left, right, reader.Line) : 
-                op is "%" ? new Mod(left, right, reader.Line) : new Pow(left, right, reader.Line));
+        return Y(op is "*" ? new Mul(reader.Line, left, right) : 
+                op is "/" ? new Div(reader.Line, left, right) : 
+                op is "%" ? new Mod(reader.Line, left, right) : new Pow(reader.Line, left, right));
     }
 
     public Expression ParseCompOp(Expression left)
@@ -485,11 +500,11 @@ public class Parser : IParser
             return null;
         }
 
-        return op is "<" ? new Minor(left, right, reader.Line) :
-                op is "<=" ? new MinorEqual(left, right, reader.Line) : 
-                op is ">" ? new Major(left, right, reader.Line) : 
-                op is ">=" ? new MajorEqual(left, right, reader.Line) : 
-                op is "==" ? new Equals(left, right, reader.Line) : new NotEqual(left, right, reader.Line);
+        return op is "<" ? new Minor(reader.Line, left, right) :
+                op is "<=" ? new MinorEqual(reader.Line, left, right) : 
+                op is ">" ? new Major(reader.Line, left, right) : 
+                op is ">=" ? new MajorEqual(reader.Line, left, right) : 
+                op is "==" ? new Equals(reader.Line, left, right) : new NotEqual(reader.Line, left, right);
     }
 
     public Expression ParseLogicOp(Expression left)
@@ -507,6 +522,6 @@ public class Parser : IParser
             return null;
         }
 
-        return op is "and" ? new And(left, right, reader.Line) : new Or(left, right, reader.Line);
+        return op is "and" ? new And(reader.Line, left, right) : new Or(reader.Line, left, right);
     }
 }

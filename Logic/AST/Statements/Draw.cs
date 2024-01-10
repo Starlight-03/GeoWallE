@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+
 public class Draw : Statement
 {
     public readonly List<GObject> Objects = new();
@@ -7,7 +8,7 @@ public class Draw : Statement
 
     private Expression expr;
 
-    public Draw(Expression expr, Text nameTag, int line) : base(line)
+    public Draw(int line, Expression expr, Text nameTag) : base(line)
     {
         this.expr = expr;
         Text = nameTag.Value;

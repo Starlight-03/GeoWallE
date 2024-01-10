@@ -9,7 +9,7 @@ public class MatchDecl : Statement
 
     private IContext context;
 
-    public MatchDecl(List<string> variables, Expression arg, int line) : base(line)
+    public MatchDecl(int line, List<string> variables, Expression arg) : base(line)
     {
         this.variables = variables;
         this.arg = arg;

@@ -4,7 +4,7 @@ public class PointDef : Expression
 
 	private readonly Expression y;
 
-	public PointDef(Expression x, Expression y, int line) : base(line)
+	public PointDef(int line, Expression x, Expression y) : base(line)
 	{
 		this.x = x;
 		this.y = y;
