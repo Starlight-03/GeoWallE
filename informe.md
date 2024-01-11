@@ -1,1 +1,0 @@
-Este proyecto esta dividido en dos parte la parte logica(backend) y la visual(frontend) 
