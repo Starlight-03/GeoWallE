@@ -13,5 +13,5 @@ public abstract partial class GObject : Panel
 
     protected readonly float width = 2.0f;
 
-	protected readonly float pixels = 20;
+	protected readonly float pixels = 5;
 }

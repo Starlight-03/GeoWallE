@@ -1,7 +1,7 @@
 [gd_scene load_steps=18 format=3 uid="uid://b4huiran7k2ye"]
 
 [ext_resource type="Theme" uid="uid://bvkc8k8raccfu" path="res://UserInterface/GeoWallETheme.tres" id="1_if5lm"]
-[ext_resource type="Script" path="res://UserInterface/scripts/Menu.gd" id="2_ep2cn"]
+[ext_resource type="Script" path="res://UserInterface/Menu.cs" id="2_l8j2c"]
 [ext_resource type="Texture2D" uid="uid://cykcrotqd8tin" path="res://UserInterface/icons/GeoWallE_Icon.png" id="3_8u7gh"]
 [ext_resource type="FontFile" uid="uid://nxaxtaxw74qj" path="res://UserInterface/fonts/IBMPlexMono-Regular.ttf" id="4_ghhnp"]
 [ext_resource type="FontFile" uid="uid://gf2u55p2t2nr" path="res://UserInterface/fonts/IBMPlexMono-SemiBold.ttf" id="5_y7hko"]
@@ -76,7 +76,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("1_if5lm")
-script = ExtResource("2_ep2cn")
+script = ExtResource("2_l8j2c")
 metadata/_edit_use_anchors_ = true
 
 [node name="Background" type="PanelContainer" parent="."]
@@ -221,7 +221,6 @@ layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_e7oki")
 
 [node name="Canvas" type="CenterContainer" parent="Background/Rows/Columns/Right/CanvasPanel"]
-clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -235,8 +234,8 @@ ok_button_text = "Save"
 dialog_hide_on_ok = true
 access = 2
 
-[connection signal="pressed" from="Background/Rows/Program/Exit" to="." method="_on_exit_pressed"]
-[connection signal="pressed" from="Background/Rows/Buttons/MarginContainer/Columns/Compile" to="." method="_on_compile_pressed"]
-[connection signal="pressed" from="Background/Rows/Buttons/MarginContainer/Columns/Save" to="." method="_on_save_pressed"]
-[connection signal="pressed" from="Background/Rows/Buttons/MarginContainer/Columns/SaveAs" to="." method="_on_save_as_pressed"]
-[connection signal="file_selected" from="SaveFileDialog" to="." method="_on_save_file_dialog_file_selected"]
+[connection signal="pressed" from="Background/Rows/Program/Exit" to="." method="OnExitPressed"]
+[connection signal="pressed" from="Background/Rows/Buttons/MarginContainer/Columns/Compile" to="." method="OnCompilePressed"]
+[connection signal="pressed" from="Background/Rows/Buttons/MarginContainer/Columns/Save" to="." method="OnSavePressed"]
+[connection signal="pressed" from="Background/Rows/Buttons/MarginContainer/Columns/SaveAs" to="." method="OnSaveAsPressed"]
+[connection signal="file_selected" from="SaveFileDialog" to="." method="OnSaveFileDialogFileSelected"]

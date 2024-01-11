@@ -1,1 +1,1 @@
-draw point(0,0);
+draw arc(point(0,0), point(1,0), point(0,1), measure(point(0,0), point(1,0));
