@@ -29,7 +29,8 @@ public partial class Menu : Control
 
 	public void OnSaveFileDialogFileSelected(string path)
 	{
-		currentFile = path;
+		if (!path.EndsWith(".geo"))
+			currentFile = path + ".geo";
 		var nameLabel = GetNode<Label>("Background/Rows/Program/Columns/Name");
 		nameLabel.Text = "GeoWallE - " + currentFile;
 		SaveAsFile();

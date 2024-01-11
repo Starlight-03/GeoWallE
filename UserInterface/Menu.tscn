@@ -233,6 +233,7 @@ theme = ExtResource("1_if5lm")
 ok_button_text = "Save"
 dialog_hide_on_ok = true
 access = 2
+root_subfolder = "GeoFiles"
 
 [connection signal="pressed" from="Background/Rows/Program/Exit" to="." method="OnExitPressed"]
 [connection signal="pressed" from="Background/Rows/Buttons/MarginContainer/Columns/Compile" to="." method="OnCompilePressed"]
