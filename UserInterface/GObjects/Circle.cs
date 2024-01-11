@@ -37,36 +37,26 @@ public partial class Arc : Circle
 
     public override void _Draw() 
     {
-        double startAngle = (double)Math.Atan2(p1.Y - center.Y, p1.X-center.X);
-        double finalAngle = (double)Math.Atan2(p2.Y - center.Y, p2.X-center.X);   
+        float startAngle = MathF.Atan2(p1.Y - center.Y, p1.X-center.X);
+        float finalAngle = MathF.Atan2(p2.Y - center.Y, p2.X-center.X);   
         if (startAngle < 0 && startAngle > -Math.PI)
-        {
             startAngle = -startAngle;
-        }
         else if(startAngle > 0)
-        {
-            startAngle = 2 * Math.PI - startAngle;
-        }
+            startAngle = 2 * MathF.PI - startAngle;
         if (finalAngle < 0 && finalAngle > -Math.PI)
-        {
             finalAngle = -finalAngle;
-        }
         else if (finalAngle > 0)
-        {
-            finalAngle = 2 * Math.PI - finalAngle;
+            finalAngle = 2 * MathF.PI - finalAngle;
+        if(startAngle < finalAngle){
+            startAngle = 2 * MathF.PI - startAngle;
+            finalAngle = 2 * MathF.PI - finalAngle;  
+            DrawArc(center.Coordinates, radius, startAngle, finalAngle, 1000, Color, width, true);
         }
-        if(startAngle < finalAngle)
-        {
-            startAngle = 2 * Math.PI - startAngle;
-            finalAngle = 2 * Math.PI - finalAngle;  
-            DrawArc(center.Coordinates, radius, (float)(startAngle), (float)(finalAngle), 64, Color);
+        else{
+            startAngle = 2 * MathF.PI - startAngle;
+            finalAngle = 2 * MathF.PI - finalAngle;  
+            DrawArc(center.Coordinates, radius, finalAngle, 2 * MathF.PI, 1000, Color, width, true);
+            DrawArc(center.Coordinates, radius, 0, startAngle, 1000, Color, width, true);
         }
-        else
-        {
-            startAngle = 2 * Math.PI - startAngle;
-            finalAngle = 2 * Math.PI - finalAngle;  
-            DrawArc(center.Coordinates, radius, (float)(finalAngle), (float)(2*Math.PI), 64, Color);
-            DrawArc(center.Coordinates, radius, (float)(0), (float)(startAngle), 64, Color); 
-        }   
     }
 }

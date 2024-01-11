@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4k8ftmgc85g7"
-path="res://.godot/imported/icon.svg-1665cc928196208884183a88aa960c89.ctex"
+uid="uid://cykcrotqd8tin"
+path="res://.godot/imported/GeoWallE_Icon.png-555bace24eff528a21951b3fb66e31b0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://UserInterface/scripts/icon.svg"
-dest_files=["res://.godot/imported/icon.svg-1665cc928196208884183a88aa960c89.ctex"]
+source_file="res://UserInterface/icons/GeoWallE_Icon.png"
+dest_files=["res://.godot/imported/GeoWallE_Icon.png-555bace24eff528a21951b3fb66e31b0.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

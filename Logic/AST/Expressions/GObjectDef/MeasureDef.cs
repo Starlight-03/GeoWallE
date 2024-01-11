@@ -10,6 +10,7 @@ public class MeasureDef : Expression
     {
         this.p1 = p1;
         this.p2 = p2;
+        Type = ExpType.Measure;
     }
 
     public override bool Validate(IContext context)

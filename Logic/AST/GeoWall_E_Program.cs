@@ -18,14 +18,18 @@ public class GeoWallE_Program : ASTNode
 		foreach(var st in Statements){
 			if (st is not FuncDef)
 				continue;
-			else if (!st.Validate(GlobalContext))
+			else if (!st.Validate(GlobalContext)){
+				Errors = st.Errors;
 				return false;
+			}
 		}
 		foreach(var st in Statements){
 			if (st is FuncDef)
 				continue;
-			else if (!st.Validate(GlobalContext))
+			else if (!st.Validate(GlobalContext)){
+				Errors = st.Errors;
 				return false;
+			}
 		}
 		return true;
 	}
@@ -36,9 +40,11 @@ public class GeoWallE_Program : ASTNode
 			statement.Evaluate(GlobalContext);
 			if (statement is Draw draw){
 				foreach (GObject gObject in draw.Objects){
-					if (gObject is not TextDraw)
-						gObject.Color = color;
-					DrawingObjects.Add(gObject);
+					if (gObject is not null){
+						if (gObject is not TextDraw)
+							gObject.Color = color;
+						DrawingObjects.Add(gObject);
+					}
 				}
 			}
 			else if (statement is ColorChange colorChange)

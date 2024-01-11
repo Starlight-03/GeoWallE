@@ -20,11 +20,11 @@ public abstract class ArithmeticExpression : BinaryExpression
         return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
-        left.Evaluate();
+        left.Evaluate(context);
         leftVal = float.Parse(left.Value);
-        right.Evaluate();
+        right.Evaluate(context);
         rightVal = float.Parse(right.Value);
 
         if (Type is ExpType.Measure){
@@ -58,9 +58,9 @@ public class Sum : ArithmeticExpression
         return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
-        base.Evaluate();
+        base.Evaluate(context);
         float val = leftVal + rightVal;
         Value = (Type is ExpType.Measure) ? Math.Round(MathF.Abs(val)).ToString() : val.ToString();
     }
@@ -90,9 +90,9 @@ public class Sub : ArithmeticExpression
         return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
-        base.Evaluate();
+        base.Evaluate(context);
         float val = leftVal - rightVal;
         Value = (Type is ExpType.Measure) ? Math.Round(MathF.Abs(val)).ToString() : val.ToString();
     }
@@ -115,9 +115,9 @@ public class Mul : ArithmeticExpression
         return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
-        base.Evaluate();
+        base.Evaluate(context);
         float val = leftVal * rightVal;
         Value = (Type is ExpType.Measure) ? Math.Round(MathF.Abs(val)).ToString() : val.ToString();
     }
@@ -140,9 +140,9 @@ public class Div : ArithmeticExpression
         return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
-        base.Evaluate();
+        base.Evaluate(context);
         float val = leftVal / rightVal;
         Value = (Type is ExpType.Measure) ? Math.Round(MathF.Abs(val)).ToString() : val.ToString();
     }
@@ -166,9 +166,9 @@ public class Mod : ArithmeticExpression
         return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
-        base.Evaluate();
+        base.Evaluate(context);
         Value = (leftVal % rightVal).ToString();
     }
 }
@@ -191,9 +191,9 @@ public class Pow : ArithmeticExpression
         return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
-        base.Evaluate();
+        base.Evaluate(context);
         Value = MathF.Pow(leftVal, rightVal).ToString();
     }
 }

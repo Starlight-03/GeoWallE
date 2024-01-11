@@ -22,9 +22,9 @@ public class CircleDef : Expression
         if (center.Type is not ExpType.Point)
             AddError("First argument must be a point, at circle definition");
         if (!radius.Validate(context))
-            AddError("Invalid argument expression at circle definition");
+            AddError("Invalid argument expression at circle definition", radius);
         if (radius.Type is not ExpType.Measure)
-            AddError("Second argument must be a measure, at circle definition", radius);
+            AddError("Second argument must be a measure, at circle definition");
 
         return IsValid();
     }

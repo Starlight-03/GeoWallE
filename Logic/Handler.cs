@@ -1,6 +1,7 @@
+using Godot;
 using System.Collections.Generic;
 
-public class Handler
+public partial class Handler
 {
 	public List<GObject> DrawingObjects { get; private set; } = new();
 
@@ -10,11 +11,13 @@ public class Handler
 
 	private string statements = "";
 
+	private void OnMenuCompile(string statements)
+	{
+		Compile(statements);
+	}
+
 	public void Compile(string statements)
 	{
-		if (this.statements == statements)
-			return;
-		
 		this.statements = statements;
 		ILexer lexer = new Lexer(statements);
 		if (lexer.Errors.Count > 0){
