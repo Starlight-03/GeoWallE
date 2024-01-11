@@ -17,15 +17,21 @@ public class VarDecl : Statement
 
     public override bool Validate(IContext context)
     {
-        if (context.VariableIsDefined(identifier, out (ExpType, Expression) variableValue))
-            AddError("");
+        if (context.VariableIsDefined(identifier))
+            AddError($"Variable {identifier} is already defined");
         else
             context.DefineVariable(identifier, type);
 
         if (def is not null && !def.Validate(context))
-            AddError("");
+            AddError($"Invalid expression at variable {identifier} declaration", def);
 
         return IsValid();
+    }
+
+    public override void Evaluate(IContext context)
+    {
+        if (def is not null)
+            def.Evaluate(context);
     }
 }
 
@@ -38,19 +44,19 @@ public class SequenceDecl : VarDecl
 
     public override bool Validate(IContext context)
     {
-        if (context.VariableIsDefined(identifier, out (ExpType, Expression) variableValue))
-            AddError("");
+        if (context.VariableIsDefined(identifier))
+            AddError($"Variable {identifier} is already defined");
         else{
             context.DefineVariable(identifier, type);
             if (def is not null)
-                variableValue.Item2 = new Sequence(0, new List<Expression>(), valType);
+                context.SetVariableValue(identifier, new Sequence(0, new List<Expression>(), valType));
         }
 
         if (def is not null){
             if (!def.Validate(context))
-                AddError("");
+                AddError($"Invalid expression at variable {identifier} declaration", def);
             else if (def.Expr.Seq.ValType != valType)
-                AddError("");
+                AddError($"Expression must be a sequence at variable {identifier} declaration");
         }
 
         return IsValid();
@@ -63,6 +69,8 @@ public class VarDef : Statement
 
     private readonly string identifier;
 
+    private IContext context;
+
     public VarDef(int line, string identifier, Expression Expr) : base(line)
     {
         this.identifier = identifier;
@@ -71,15 +79,18 @@ public class VarDef : Statement
 
     public override bool Validate(IContext context)
     {
-        if (!Expr.Validate(context))
-            AddError("");
+        this.context = context;
 
-        if (context.VariableIsDefined(identifier, out (ExpType, Expression) variableValue)){
-            if (variableValue.Item2 is not null)
-                AddError("");
+        if (!Expr.Validate(context))
+            AddError($"Invalid expression in variable {identifier} definition", Expr);
+
+        if (context.VariableIsDefined(identifier)){
+            if (context.GetVariableValue(identifier) is not null)
+                AddError($"Variable {identifier} is already defined");
             else{
-                if (variableValue.Item1 != Expr.Type)
-                    AddError("");
+                ExpType type = context.GetVariableType(identifier);
+                if (type != Expr.Type)
+                    AddError($"Variable {identifier} has been declared as {type}, not {Expr.Type}");
                 else
                     context.SetVariableValue(identifier, Expr);
             }
@@ -90,5 +101,5 @@ public class VarDef : Statement
         return IsValid();
     }
 
-    public override void Evaluate() { }
+    public override void Evaluate(IContext context) => context.GetVariableValue(identifier).Evaluate(context);
 }

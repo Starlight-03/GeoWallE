@@ -20,21 +20,18 @@ public class FuncDef : Statement
         var innerContext = context.CreateChildContext();
 
         foreach(string arg in args)
-            innerContext.DefineVariable(arg, ExpType.Undefined);
+            innerContext.DefineVariable(arg);
 
-        if (context.FunctionIsDefined(identifier, args.Count, out (ExpType, Expression) functionBody))
-            AddError("");
+        if (context.FunctionIsDefined(identifier, args.Count))
+            AddError($"Function {identifier} is already defined");
         else
-            context.DefineFunction(identifier, args.Count, ExpType.Undefined, body);
+            context.DefineFunction(identifier, args, body);
 
         if (!body.Validate(innerContext))
-            AddError("");
-
-        if (body.Type is not ExpType.Undefined)
-            context.SetFunctionType(identifier, args.Count, body.Type);
+            AddError("Invalid expression as a body of a function", body);
 
         return IsValid();
     }
 
-    public override void Evaluate() { }
+    public override void Evaluate(IContext context) { }
 }

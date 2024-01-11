@@ -13,14 +13,24 @@ public class MeasureDef : Expression
     }
 
     public override bool Validate(IContext context)
-    => p1 is not null && p1.Validate(context) && p1.Type == ExpType.Point 
-        && p2 is not null && p2.Validate(context) && p2.Type == ExpType.Point;
-
-    public override void Evaluate()
     {
-        p1.Evaluate();
+        if (!p1.Validate(context))
+            AddError($"Invalid argument expression at measure definition", p1);
+        if (p1.Type is not ExpType.Point)
+            AddError($"First argument must be a point, at measure definition");
+        if (!p2.Validate(context))
+            AddError($"Invalid argument expression at measure definition", p2);
+        if (p2.Type is not ExpType.Point)
+            AddError($"Second argument must be a point, at measure definition");
+
+        return IsValid();
+    }
+
+    public override void Evaluate(IContext context)
+    {
+        p1.Evaluate(context);
         Point point1 = (Point)p1.Object;
-        p2.Evaluate();
+        p2.Evaluate(context);
         Point point2 = (Point)p2.Object;
         float measure = MathF.Sqrt(MathF.Pow(point2.X - point1.X, 2) + MathF.Pow(point2.Y - point1.Y, 2));
         Value = MathF.Round(MathF.Abs(measure)).ToString();

@@ -20,23 +20,25 @@ public class MatchDecl : Statement
         this.context = context;
 
         if (!arg.Validate(context))
-            AddError("");
+            AddError("Invalid expression at match declaration", arg);
+        if (arg.Type is not ExpType.Sequence)
+            AddError("Expression must be a sequence in a match declaration");
 
         foreach (string variable in variables){
-            if (context.VariableIsDefined(variable, out (ExpType, Expression) variableValue))
-                AddError("");
-            else{
-                if (variable is "_") continue;
-                else context.DefineVariable(variable, arg.Type);
-            }
+            if (variable is "_") 
+                continue;
+            else if (context.VariableIsDefined(variable))
+                AddError($"Variable {variable} is already defined");
+            else
+                context.DefineVariable(variable, arg.Type);
         }
-        
+
         return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
-        arg.Evaluate();
+        arg.Evaluate(context);
         if (arg is Sequence seq){
             int i = 0;
             for (; i < MathF.Min(variables.Count, seq.Count); i++){

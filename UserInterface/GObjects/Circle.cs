@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 public partial class Circle : GObject
 {
@@ -10,6 +11,13 @@ public partial class Circle : GObject
     {
         this.center = center;
         this.radius = radius * pixels;
+    }
+
+    public override List<Point> GetPoints()
+    {
+        // List<Point> points = new();
+        // for (float x = radius*MathF.Cos(0); x )
+        throw new NotImplementedException();
     }
 
     public override void _Draw() => DrawArc(center.Coordinates, radius, 0, MathF.PI * 2, 1000, Color, width, true);

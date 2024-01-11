@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 
 public partial class Point : GObject
@@ -8,5 +9,7 @@ public partial class Point : GObject
 
 	public float Y => Coordinates.Y;
 
-	public override void _Draw() => DrawCircle(Coordinates, 3.0f, Color);
+    public override List<Point> GetPoints() { return new List<Point>() { this };}
+
+    public override void _Draw() => DrawCircle(Coordinates, 3.0f, Color);
 }

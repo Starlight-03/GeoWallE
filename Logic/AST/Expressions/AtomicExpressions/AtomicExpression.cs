@@ -4,5 +4,5 @@ public abstract class AtomicExpression : Expression
 
     public override bool Validate(IContext context) => true;
 
-    public override void Evaluate() { }
+    public override void Evaluate(IContext context) { }
 }

@@ -9,7 +9,7 @@ public class Import : Statement
     public override bool Validate(IContext context)
     {
         if (!file.EndsWith(".geo"))
-            AddError("");
+            AddError("Import file must be of \".geo\" extension");
         else{
             Handler handler = new();
             var f = FileAccess.Open("res://GeoFiles//" + file, FileAccess.ModeFlags.Read);
@@ -28,5 +28,5 @@ public class Import : Statement
         return IsValid();
     }
 
-    public override void Evaluate() { }
+    public override void Evaluate(IContext context) { }
 }

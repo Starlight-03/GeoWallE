@@ -11,15 +11,25 @@ public class PointDef : Expression
 		Type = ExpType.Point;
 	}
 
-	public override bool Validate(IContext context) 
-	=> x is not null && x.Validate(context) && x.Type == ExpType.Number 
-		&& y is not null && y.Validate(context) && y.Type == ExpType.Number;
-
-	public override void Evaluate()
+	public override bool Validate(IContext context)
 	{
-		x.Evaluate();
+		if (!x.Validate(context))
+			AddError("Invalid argument expression at point definition", x);
+		if (x.Type is not ExpType.Number)
+			AddError("First argument must be a number, at point definition");
+		if (!y.Validate(context))
+			AddError("Invalid argument expression at point definition", y);
+		if (y.Type is not ExpType.Number)
+			AddError("Second argument must be a number, at point definition");
+
+		return IsValid();
+	}
+
+	public override void Evaluate(IContext context)
+	{
+		x.Evaluate(context);
 		float X = float.Parse(x.Value); 
-		y.Evaluate();
+		y.Evaluate(context);
 		float Y = float.Parse(y.Value);
 		Object = new Point(X, Y);
 	}

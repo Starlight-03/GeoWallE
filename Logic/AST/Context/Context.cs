@@ -7,58 +7,91 @@ public class Context : IContext
 
     public Dictionary<string, (ExpType, Expression)> Variables { get; private set; } = new();
 
-    public Dictionary<(string, int), (ExpType, Expression)> Functions { get; private set; } = new();
+    public Dictionary<string, (List<string>, Expression, IContext)> Functions { get; private set; } = new();
 
     public Context()
     {
         Variables["PI"] = (ExpType.Number, new Number(MathF.PI.ToString()));
         Variables["E"] = (ExpType.Number, new Number(MathF.E.ToString()));
-        Functions[("sin", 1)] = (ExpType.Number, new Sin());
-        Functions[("cos", 1)] = (ExpType.Number, new Cos());
-        Functions[("log", 2)] = (ExpType.Number, new Log());
-        Functions[("ln", 1)] = (ExpType.Number, new Ln());
-        Functions[("intersect", 2)] = (ExpType.Sequence, new Intersect());
-        Functions[("points", 1)] = (ExpType.Sequence, new Points());
-        Functions[("samples", 0)] = (ExpType.Sequence, new Samples());
-        Functions[("randoms", 0)] = (ExpType.Sequence, new Randoms());
+        AddFunction("sin", new Sin(), ("x", ExpType.Number));
+        AddFunction("cos", new Cos(), ("x", ExpType.Number));
+        AddFunction("log", new Log(), ("a", ExpType.Number), ("b", ExpType.Number));
+        AddFunction("ln", new Ln(), ("x", ExpType.Number));
+        AddFunction("intersect", new Intersect(), ("f1", ExpType.Undefined), ("f2", ExpType.Undefined));
+        AddFunction("points", new Points(), ("f", ExpType.Undefined));
+        AddFunction("samples", new Samples());
+        AddFunction("randoms", new Randoms());
+
+        void AddFunction(string identifier, FixedFunction function, params (string, ExpType)[] args){
+            IContext innerContext = this.CreateChildContext();
+            List<string> argNames = new();
+            foreach (var arg in args){
+                innerContext.DefineVariable(arg.Item1, arg.Item2);
+                argNames.Add(arg.Item1);
+            }
+            Functions[identifier] = (argNames, function, innerContext);
+        }
     }
 
     public Context(IContext parent) => this.parent = parent;
 
-    public bool VariableIsDefined(string variable, out (ExpType, Expression) variableValue) 
-    => Variables.TryGetValue(variable, out variableValue) || (parent != null && parent.VariableIsDefined(variable, out variableValue));
+    public bool VariableIsDefined(string variable) 
+    => Variables.ContainsKey(variable) || (parent != null && parent.VariableIsDefined(variable));
 
-    public bool FunctionIsDefined(string function, int args, out (ExpType, Expression) functionBody) 
-    => Functions.TryGetValue((function, args), out functionBody) 
-        || parent != null && parent.FunctionIsDefined(function, args, out functionBody);
+    public bool FunctionIsDefined(string function, int args) 
+    => (Functions.TryGetValue(function, out (List<string>, Expression, IContext) func) && func.Item1.Count == args) 
+        || (parent is not null && parent.FunctionIsDefined(function, args));
 
-    public void DefineVariable(string variable, ExpType type, Expression value = null) 
-    => Variables.Add(variable, (type, value));
-
-    public void DefineFunction(string function, int args, ExpType type, Expression body)
+    public void DefineVariable(string variable, ExpType type = ExpType.NotSet, Expression value = null) 
     {
-        if (!FunctionIsDefined(function, args, out (ExpType, Expression) functionBody))
-            Functions[(function, args)] = (type, body);
+        if (!Variables.ContainsKey(variable)){
+            if (value is not null && value.Type is ExpType.Number){
+                value.Evaluate(this);
+                Variables[variable] = (type, new Number(value.Value));
+            }
+            else
+                Variables[variable] = (type, value);
+        }
     }
 
-    public void SetFunctionType(string function, int args, ExpType type) 
+    public void DefineFunction(string function, List<string> args, Expression body)
     {
-        if (FunctionIsDefined(function, args, out (ExpType, Expression) functionBody))
-            functionBody.Item1 = type;
+        if (!Functions.ContainsKey(function))
+            Functions[function] = (args, body, this.CreateChildContext());
+    }
+
+    public void SetVariableType(string variable, ExpType type)
+    {
+        if (Variables.TryGetValue(variable, out (ExpType, Expression) variableValue))
+            Variables[variable] = (type, variableValue.Item2);
     }
 
     public void SetVariableValue(string variable, Expression value)
     {
-        if (VariableIsDefined(variable, out (ExpType, Expression) variableValue))
-            variableValue.Item2 = value;
+        if (Variables.TryGetValue(variable, out (ExpType, Expression) variableValue))
+            Variables[variable] = (variableValue.Item1, value);
     }
 
+    public List<string> GetFunctionArgs(string function) 
+    => Functions.TryGetValue(function, out (List<string>, Expression, IContext) func) ? func.Item1 : 
+        parent?.GetFunctionArgs(function);
+
+    public ExpType GetVariableType(string variable) 
+    => Variables.TryGetValue(variable, out (ExpType, Expression) variableValue) ? variableValue.Item1 : 
+        parent is not null ? parent.GetVariableType(variable) : ExpType.NotSet;
+
     public Expression GetVariableValue(string variable) 
-    => VariableIsDefined(variable, out (ExpType, Expression) variableValue) ? variableValue.Item2 : null;
+    => Variables.TryGetValue(variable, out (ExpType, Expression) variableValue) ? variableValue.Item2 : 
+        parent is not null ? parent.GetVariableValue(variable) : null;
 
     public Expression GetFunctionBody(string function, int args) 
-    => FunctionIsDefined(function, args, out (ExpType, Expression) functionBody) ? functionBody.Item2 : null;
-    
+    => Functions.TryGetValue(function, out (List<string>, Expression, IContext) functionBody) && functionBody.Item1.Count == args ? functionBody.Item2 : 
+        parent is not null ? parent.GetFunctionBody(function, args) : null;
+
+    public IContext GetInnerContext(string function, int args) 
+    => Functions.TryGetValue(function, out (List<string>, Expression, IContext) functionBody) && functionBody.Item1.Count == args ? functionBody.Item3 : 
+        parent is not null ? parent.GetInnerContext(function, args) : null;
+
     public IContext CreateChildContext() => new Context(this);
 
     public void Merge(IContext other)

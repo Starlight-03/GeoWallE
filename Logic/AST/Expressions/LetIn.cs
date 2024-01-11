@@ -18,20 +18,20 @@ public class LetIn : Expression
 
         foreach (var statement in statements)
             if (!statement.Validate(innerContext))
-                AddError("");
+                AddError("Invalid statement at \'let-in\' expression", statement);
 
         if (!body.Validate(innerContext))
-            AddError("");
+            AddError("Invalid argument as \'let-in\' body", body);
 
         return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
         foreach (var statement in statements)
-            statement.Evaluate();
+            statement.Evaluate(context);
 
-        body.Evaluate();
+        body.Evaluate(context);
         Value = body.Value;
     }
 }

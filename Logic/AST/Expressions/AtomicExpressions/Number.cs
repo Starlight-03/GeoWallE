@@ -6,7 +6,7 @@ public class Number : AtomicExpression
         Type = ExpType.Number;
     }
 
-    public Number(int value)
+    public Number(float value)
     {
         Value = value.ToString();
         Type = ExpType.Number;

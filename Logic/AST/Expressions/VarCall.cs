@@ -6,22 +6,29 @@ public class VarCall : Expression
 
     public VarCall(int line, string identifier) : base(line) => this.identifier = identifier;
 
+    public void SetVariableType(ExpType type)
+    {
+        Type = type;
+        context.SetVariableType(identifier, type);
+    }
+
     public override bool Validate(IContext context)
     {
         this.context = context;
 
-        if (context.VariableIsDefined(identifier, out (ExpType, Expression) variableValue))
-            Type = variableValue.Item1;
+        if (context.VariableIsDefined(identifier))
+            Type = context.GetVariableType(identifier);
         else
-            AddError("");
+            AddError($"Variable {identifier} has not been declared");
 
         return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
         Expression val = context.GetVariableValue(identifier);
-        val.Evaluate();
+        if (val.Value is null && val.Seq is null && val.Object is null)
+            val.Evaluate(context);
         if (val.Type is ExpType.Number || val.Type is ExpType.Text)
             Value = val.Value;
         else if (val.Type is ExpType.Sequence)

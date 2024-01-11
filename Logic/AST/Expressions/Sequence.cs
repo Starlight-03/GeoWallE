@@ -9,7 +9,7 @@ public class Sequence : Expression
     public Sequence(int line, List<Expression> values, ExpType valType = ExpType.Undefined) : base(line)
     {
         Values = values;
-        this.ValType = valType;
+        ValType = valType;
         Type = ExpType.Sequence;
     }
 
@@ -19,7 +19,7 @@ public class Sequence : Expression
         ValType = ExpType.Number;
         Values = new List<Expression>();
         for (int i = start; i <= end; i++)
-            Values.Add(new Number(i));
+            Values.Add(new Number(i.ToString()));
     }
 
     public int Count => Values.Count;
@@ -30,20 +30,20 @@ public class Sequence : Expression
     {
         foreach (var item in Values){
             if (!item.Validate(context))
-                return false;
-            if (ValType == ExpType.Undefined)
+                AddError($"Invalid argument in {ValType} sequence", item);
+            if (ValType is ExpType.Undefined)
                 ValType = item.Type;
             else if (item.Type != ValType)
-                return false;
+                AddError($"{ValType} sequence doesn't accept {item.Type} expressions");
         }
         
-        return true;
+        return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
         foreach (var item in Values)
-            item.Evaluate();
+            item.Evaluate(context);
         Seq = this;
     }
 

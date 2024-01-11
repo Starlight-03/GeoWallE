@@ -16,29 +16,29 @@ public class IfThenElse : Expression
     public override bool Validate(IContext context)
     {
         if (!condition.Validate(context))
-            AddError("");
+            AddError("Invalid expression after \'if\' keyword", condition);
         if (!positive.Validate(context))
-            AddError("");
+            AddError("Invalid expression after \'then\' keyword", positive);
         if (!negative.Validate(context))
-            AddError("");
+            AddError("Invalid expression after \'else\' keyword", negative);
         if (positive.Type != negative.Type)
-            AddError("");
+            AddError("\'else\' expression doesn't have the same type as \'then\' expression");
         else
             Type = positive.Type;
         
         return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
-        condition.Evaluate();
-        if (BooleanEvaluator.Evaluate(condition))
+        condition.Evaluate(context);
+        if (BooleanEvaluator.Evaluate(context, condition))
             Evaluate(positive);
         else
             Evaluate(negative);
 
         void Evaluate(Expression expression){
-            expression.Evaluate();
+            expression.Evaluate(context);
             if (expression.Type is ExpType.Number || expression.Type is ExpType.Text 
                 || expression.Type is ExpType.Measure)
                     Value = expression.Value;

@@ -13,10 +13,9 @@ public abstract class ArithmeticExpression : BinaryExpression
         if (!base.Validate(context))
             return false;
 
-        if (left.Type is not ExpType.Number && left.Type is not ExpType.Measure)
-            AddError("");
-        if (right.Type is not ExpType.Number && right.Type is not ExpType.Measure)
-            AddError("");
+        if ((left.Type is not ExpType.Number && left.Type is not ExpType.Measure) 
+            || (right.Type is not ExpType.Number && right.Type is not ExpType.Measure))
+                AddError();
 
         return IsValid();
     }
@@ -45,13 +44,13 @@ public class Sum : ArithmeticExpression
 
         if (left.Type is ExpType.Number){
             if (right.Type is not ExpType.Number)
-                AddError("");
+                AddError();
             else
                 Type = ExpType.Number;
         }
         if (left.Type is ExpType.Measure){
             if (right.Type is not ExpType.Measure)
-                AddError("");
+                AddError();
             else
                 Type = ExpType.Measure;
         }
@@ -77,13 +76,13 @@ public class Sub : ArithmeticExpression
 
         if (left.Type is ExpType.Number){
             if (right.Type is not ExpType.Number)
-                AddError("");
+                AddError();
             else
                 Type = ExpType.Number;
         }
         if (left.Type is ExpType.Measure){
             if (right.Type is not ExpType.Measure)
-                AddError("");
+                AddError();
             else
                 Type = ExpType.Measure;
         }
@@ -109,7 +108,7 @@ public class Mul : ArithmeticExpression
 
         if ((left.Type is ExpType.Measure && right.Type is not ExpType.Number) 
             || (right.Type is ExpType.Measure && left.Type is not ExpType.Number))
-                AddError("");
+                AddError();
         
         Type = (left.Type is ExpType.Measure || right.Type is ExpType.Measure) ? ExpType.Measure : ExpType.Number;
 
@@ -134,7 +133,7 @@ public class Div : ArithmeticExpression
 
         if ((left.Type is ExpType.Measure && right.Type is not ExpType.Measure) 
             || (right.Type is ExpType.Measure && left.Type is not ExpType.Measure))
-                AddError("");
+                AddError();
         
         Type = (left.Type is ExpType.Measure && right.Type is ExpType.Measure) ? ExpType.Number : ExpType.Measure;
 
@@ -162,7 +161,7 @@ public class Mod : ArithmeticExpression
         base.Validate(context);
 
         if (left.Type is not ExpType.Number || right.Type is not ExpType.Number)
-            AddError("");
+            AddError();
 
         return IsValid();
     }
@@ -187,7 +186,7 @@ public class Pow : ArithmeticExpression
         base.Validate(context);
 
         if (left.Type is not ExpType.Number || right.Type is not ExpType.Number)
-            AddError("");
+            AddError();
 
         return IsValid();
     }

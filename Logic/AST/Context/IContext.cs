@@ -4,23 +4,29 @@ public interface IContext
 {
     public Dictionary<string, (ExpType, Expression)> Variables { get; }
 
-    public Dictionary<(string, int), (ExpType, Expression)> Functions { get; }
+    public Dictionary<string, (List<string>, Expression, IContext)> Functions { get; }
 
-    bool VariableIsDefined(string variable, out (ExpType, Expression) variableValue);
+    bool VariableIsDefined(string variable);
 
-    bool FunctionIsDefined(string function, int args, out (ExpType, Expression) functionBody);
+    bool FunctionIsDefined(string function, int args);
 
-    void DefineVariable(string variable, ExpType type, Expression value = null);
+    void DefineVariable(string variable, ExpType type = ExpType.NotSet, Expression value = null);
 
-    void DefineFunction(string function, int args, ExpType type, Expression body);
+    void DefineFunction(string function, List<string> args, Expression body);
 
-    void SetFunctionType(string function, int args, ExpType type);
+    void SetVariableType(string variable, ExpType type);
 
     void SetVariableValue(string variable, Expression value);
+
+    List<string> GetFunctionArgs(string function);
+
+    ExpType GetVariableType(string variable);
 
     Expression GetVariableValue(string variable);
 
     Expression GetFunctionBody(string function, int args);
+
+    IContext GetInnerContext(string function, int args);
 
     IContext CreateChildContext();
 

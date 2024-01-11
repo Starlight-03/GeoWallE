@@ -17,22 +17,24 @@ public class Draw : Statement
     public override bool Validate(IContext context)
     {
         if (!expr.Validate(context))
-            AddError("");
+            AddError("Invalid expression at draw statement", expr);
         if (expr.Type is ExpType.Undefined)
-            AddError("");
+            AddError("Cannot draw an undefined object");
         if (expr.Type is ExpType.Sequence){
             if (expr is Concat) 
                 expr = expr.Seq;
-            if (expr is Sequence seq && (seq.valType is ExpType.Number || seq.valType is ExpType.Text))
-                AddError("");
+            if (expr is Sequence seq && seq.ValType is ExpType.Number)
+                AddError("Cannot draw a number");
         }
+        if (expr.Type is ExpType.Number)
+            AddError("Cannot draw a number");
 
         return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
-        expr.Evaluate();
+        expr.Evaluate(context);
 
         if (expr is Sequence sequence){
             foreach (var item in sequence.Values)

@@ -6,8 +6,6 @@ public class FuncCall : Expression
 
     private readonly List<Expression> args;
 
-    private IContext context;
-
     public FuncCall(int line, string identifier, List<Expression> args) : base(line)
     {
         this.identifier = identifier;
@@ -16,27 +14,41 @@ public class FuncCall : Expression
 
     public override bool Validate(IContext context)
     {
-        this.context = context;
+        List<string> argNames = context.GetFunctionArgs(identifier);
 
-        foreach (var expr in args)
-            if (!expr.Validate(context))
-                return false;
+        if (!context.FunctionIsDefined(identifier, args.Count)){
+            if (argNames is null)
+                AddError($"Function {identifier} has not been defined");
+            else if (args.Count != argNames.Count)
+                AddError($"Function {identifier} receives {argNames.Count} arguments, but {args.Count} were given");
+            return false;
+        }
 
-        if (context.FunctionIsDefined(identifier, args.Count, out (ExpType, Expression) functionBody))
-            Type = functionBody.Item1;
-        else
-            AddError("");
-
+        IContext innerContext = context.GetInnerContext(identifier, args.Count);
+        Expression body = context.GetFunctionBody(identifier, args.Count);
+        foreach (var arg in argNames)
+            innerContext.DefineVariable(arg);
+        for (int i = 0; i < args.Count; i++){
+            if (!args[i].Validate(context))
+                AddError($"Invalid argument No.{i} at {identifier} function call", args[i]);
+            var argType = innerContext.GetVariableType(argNames[i]);
+            if (argType is not ExpType.NotSet && argType != args[i].Type)
+                AddError($"Function \'{identifier}\' receives \'{argType}\', not \'{args[i].Type}\'");
+        }
+        Type = body.Type;
         return IsValid();
     }
 
-    public override void Evaluate()
+    public override void Evaluate(IContext context)
     {
-        foreach (var expr in args)
-            expr.Evaluate();
-
+        List<string> argNames = context.GetFunctionArgs(identifier);
         Expression body = context.GetFunctionBody(identifier, args.Count);
-        body.Evaluate();
+        IContext innerContext = context.CreateChildContext();
+        for (int i = 0; i < args.Count; i++){
+            args[i].Evaluate(context);
+            innerContext.DefineVariable(argNames[i], args[i].Type, args[i]);
+        }
+        body.Evaluate(innerContext);
         Value = body.Value;
     }
 }

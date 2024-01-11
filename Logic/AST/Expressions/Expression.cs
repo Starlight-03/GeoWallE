@@ -8,11 +8,12 @@ public abstract class Expression : ASTNode
 
     public GObject Object { get; protected set; }
 
-    public Expression(int line) : base(line) => Type = ExpType.Undefined;
+    public Expression(int line) : base(line) => Type = ExpType.NotSet;
 }
 
 public enum ExpType
 {
+    NotSet,
     Number,
     Text,
     Point,

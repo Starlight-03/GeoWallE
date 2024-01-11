@@ -4,9 +4,9 @@ public class CircleDef : Expression
 
     protected float r;
 
-    private readonly Expression center;
+    protected readonly Expression center;
 
-    private readonly Expression radius;
+    protected readonly Expression radius;
 
     public CircleDef(int line, Expression center, Expression radius) : base(line)
     {
@@ -16,14 +16,24 @@ public class CircleDef : Expression
     }
 
     public override bool Validate(IContext context)
-    => center is not null && center.Validate(context) && center.Type == ExpType.Point 
-        && radius is not null && radius.Validate(context) && radius.Type == ExpType.Measure;
-
-    public override void Evaluate()
     {
-        center.Evaluate();
+        if (!center.Validate(context))
+            AddError("Invalid argument expression at circle definition", center);
+        if (center.Type is not ExpType.Point)
+            AddError("First argument must be a point, at circle definition");
+        if (!radius.Validate(context))
+            AddError("Invalid argument expression at circle definition");
+        if (radius.Type is not ExpType.Measure)
+            AddError("Second argument must be a measure, at circle definition", radius);
+
+        return IsValid();
+    }
+
+    public override void Evaluate(IContext context)
+    {
+        center.Evaluate(context);
         c = (Point)center.Object;
-        radius.Evaluate();
+        radius.Evaluate(context);
         r = float.Parse(radius.Value);
         Object = new Circle(c, r);
     }
@@ -43,16 +53,33 @@ public class ArcDef : CircleDef
     }
 
     public override bool Validate(IContext context)
-    => base.Validate(context) 
-        && p1 is not null && p1.Validate(context) 
-        && p2 is not null && p2.Validate(context);
-
-    public override void Evaluate()
     {
-        base.Evaluate();
-        p1.Evaluate();
+        if (!center.Validate(context))
+            AddError("Invalid argument expression at arc definition", center);
+        if (center.Type is not ExpType.Point)
+            AddError("First argument must be a point, at arc definition");
+        if (!p1.Validate(context))
+            AddError("Invalid argument expression at arc definition", p1);
+        if (p1.Type is not ExpType.Point)
+            AddError("Second argument must be a point, at arc definition");
+        if (!p2.Validate(context))
+            AddError("Invalid argument expression at arc definition", p2);
+        if (p2.Type is not ExpType.Point)
+            AddError("Third argument must be a point, at arc definition");
+        if (!radius.Validate(context))
+            AddError("Invalid argument expression at arc definition", radius);
+        if (radius.Type is not ExpType.Measure)
+            AddError("Fourth argument must be a measure, at arc definition");
+
+        return IsValid();
+    }
+
+    public override void Evaluate(IContext context)
+    {
+        base.Evaluate(context);
+        p1.Evaluate(context);
         Point point1 = (Point)p1.Object;
-        p2.Evaluate();
+        p2.Evaluate(context);
         Point point2 = (Point)p2.Object;
         Object = new Arc(c, point1, point2, r);
     }

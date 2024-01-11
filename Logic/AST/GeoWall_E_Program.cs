@@ -15,17 +15,25 @@ public class GeoWallE_Program : ASTNode
 
 	public override bool Validate(IContext context = null)
 	{
-		foreach(var st in Statements)
-			if (!st.Validate(GlobalContext))
+		foreach(var st in Statements){
+			if (st is not FuncDef)
+				continue;
+			else if (!st.Validate(GlobalContext))
 				return false;
-
+		}
+		foreach(var st in Statements){
+			if (st is FuncDef)
+				continue;
+			else if (!st.Validate(GlobalContext))
+				return false;
+		}
 		return true;
 	}
 
-	public override void Evaluate()
+	public override void Evaluate(IContext context = null)
 	{
 		foreach (Statement statement in Statements){
-			statement.Evaluate();
+			statement.Evaluate(GlobalContext);
 			if (statement is Draw draw){
 				foreach (GObject gObject in draw.Objects){
 					if (gObject is not TextDraw)
