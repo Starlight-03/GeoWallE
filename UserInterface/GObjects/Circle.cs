@@ -45,5 +45,38 @@ public partial class Arc : Circle
         return a;
     }
 
-    public override void _Draw() => DrawArc(center.Coordinates, radius, GetAngle(l1), GetAngle(l2), 1000, Color, width, true);
+    public override void _Draw() 
+    {
+      double startAngle = (double)Math.Atan2(P1.Y - center.Y, P1.X-center.X);
+	  double finalAngle = (double)Math.Atan2(P2.Y - center.Y, P2.X-center.X);   
+      if (startAngle < 0 && startAngle > -Math.PI)
+	  {
+		startAngle = -startAngle;
+	  }
+      else if(startAngle > 0)
+      {
+        startAngle = 2 * Math.PI - startAngle;
+      }
+      if (finalAngle < 0 && finalAngle > -Math.PI)
+	  {
+	  	finalAngle = -finalAngle;
+	  }
+	  else if (finalAngle > 0)
+      {
+        finalAngle = 2 * Math.PI - finalAngle;
+      }
+      if(startAngle < finalAngle)
+	  {
+        startAngle = 2 * Math.PI - startAngle;
+        finalAngle = 2 * Math.PI - finalAngle;  
+        DrawArc(center.Coordinates, radius, (float)(startAngle), (float)(finalAngle), 64, Color);
+      }
+	  else
+	  {
+	  	startAngle = 2 * Math.PI - startAngle;
+        finalAngle = 2 * Math.PI - finalAngle;  
+	  	DrawArc(center.Coordinates, radius, (float)(finalAngle), (float)(2*Math.PI), 64, Color);
+        DrawArc(center.Coordinates, radius, (float)(0), (float)(startAngle), 64, Color); 
+      }   
+    }
 }
